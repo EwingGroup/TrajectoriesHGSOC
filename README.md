@@ -2,7 +2,7 @@
 
 The code used in the manuscript 
 
-<p style="text-align: center;">*'Divergent trajectories to structural diversity impact patient survival in high grade serous ovarian cancer'* </p>
+<p style="text-align: center;"><i>'Divergent trajectories to structural diversity impact patient survival in high grade serous ovarian cancer'</i></p>
 
 can be found here.
 
