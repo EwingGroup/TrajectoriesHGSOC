@@ -1,0 +1,70 @@
+module load anaconda
+
+conda config --add envs_dirs /exports/igmm/eddie/HGS-OvarianCancerA-SGP-WGS/signatures/anaconda/envs
+
+cd /exports/igmm/eddie/HGS-OvarianCancerA-SGP-WGS/signatures/sv_signatures/data
+
+cp /exports/igmm/eddie/HGS-OvarianCancerA-SGP-WGS/SVhotspots/clusterSVs/*sv_clusters_and_footprints ./
+
+#Add sample names to cluster lines
+
+for i in *.consensus.100bp.bedpe.sv_clusters_and_footprints
+do
+
+	sample=`basename $i .consensus.100bp.bedpe.sv_clusters_and_footprints`
+	cat $i | while read line
+	do 
+		echo -e "${line}\t${sample}" >> ${sample}.consensus.100bp.bedpe.sv_clusters_and_footprints_ids
+	done
+done
+
+cat *consensus.100bp.bedpe.sv_clusters_and_footprints_ids > Combined_consensus.100bp.bedpe.sv_clusters_and_footprints_ids
+
+#keep positions of breakpoints, SV type, SV_id, sample, clustered, size of cluster, cluster_id
+
+R
+dat <- read.table("Combined_consensus.100bp.bedpe.sv_clusters_and_footprints_ids",sep="\t")
+dat <- dat[,c(1:7,11:13,18,19)]
+
+colnames(dat)<- c("chr1","start1","end1","chr2","start2","end2","sv_id","sv_type","cluster_id","cluster_size","cluster_pval","sample")
+
+dat$Cohort <- substr(dat$sample,1,2)
+
+dat$mid1<- dat$start1 + ((dat$end1 -dat$start1 )/2)
+dat$mid2<- dat$start2 + ((dat$end2 -dat$start2 )/2)
+dat$sv_length <- dat$mid2 - dat$mid1
+dat[dat$sv_type=="CTX","sv_length"] <- 10^9
+dat <- dat[,c(1:13,16)]
+
+write.table(dat,"Combined_consensus.100bp.bedpe.sv_clusters_and_footprints_ids.formatted.txt",sep="\t",row.names=F,quote=F)
+
+
+
+#Linx files with foldback inversions - AOCS_001_PrimaryTumour.linx.svs.tsv 
+
+
+‘pio’, ‘easypar’, ‘clisymbols’, ‘dndscv’, ‘ctree’
+
+
+gridss_id <- sapply( info(vcf)$SUPPORTINGID, function(x) paste(x[grep('gridss',x)],collapse=","))
+mcols(gr)$gridss_id <- gridss_id
+
+breakpointgr2bedpeType <- function(gr){
+
+         bedpe <- data.frame(chrom1 = GenomeInfoDb::seqnames(gr), 
+                         start1 = start(gr) - 1, 
+                 end1 = end(gr), 
+                 chrom2 = GenomeInfoDb::seqnames(partner(gr)), 
+                         start2 = start(partner(gr)) - 1, 
+                 end2 = end(partner(gr)), 
+                         name = names(gr), 
+                 partner.name = names(partner(gr)), 
+                         score = gr$QUAL, strand1 = strand(gr), 
+                 strand2 = strand(partner(gr)),
+                 svtype = gr$simpleSVtype,
+                 gridss_id = gr$gridss_id)
+ bedpe <- bedpe[(as.character(bedpe$chrom1) < as.character(bedpe$chrom2)) | 
+         (bedpe$chrom1 == bedpe$chrom2 & bedpe$start1 < bedpe$start2), 
+         -c(8)]
+ return(bedpe)
+ }
