@@ -1,10 +1,9 @@
 # Divergent trajectories to structural diversity impact patient survival in high grade serous ovarian cancer
 
-The code used in the manuscript 
+This repository contains the code used in the manuscript: 
 
 <p style="text-align: center;"><i>'Divergent trajectories to structural diversity impact patient survival in high grade serous ovarian cancer'</i></p>
 
-can be found here.
 
 This work (abstract below) highlights high grade serous ovarian carcinoma as an exemplar tumour type for studying chromosomal instability and is the result of a combined effort across the Scottish High Grade Serous Ovarian Consortium to comprehensively characterise the mutational landscape driving high grade serous ovarian cancer.
 
