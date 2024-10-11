@@ -1,4 +1,0 @@
-cluster: qsub 
-jobs: 30
-resources: 
-    h_vmem=1G
