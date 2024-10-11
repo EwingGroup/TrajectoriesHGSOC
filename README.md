@@ -11,6 +11,8 @@ The preprint can be found on [bioRxiv](https://www.biorxiv.org/content/10.1101/2
 
 I have highlighted our main findings in a [tweetorial](https://x.com/Ailith_Ewing/status/1747291048206901394?s=20).
 
+All code to reproduce figures can be run in R on a desktop computer (v4.1.0). 
+
 This repository is currently a work in progress. We will update the code on here throughout peer-review in time for publication.
 
 

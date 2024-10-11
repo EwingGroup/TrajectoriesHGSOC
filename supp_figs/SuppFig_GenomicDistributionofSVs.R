@@ -6,7 +6,7 @@
 
 
 #Make x_axis
-chrom_lengths <- read.table("data/chrom_lengths.txt",sep="\t")
+chrom_lengths <- read.table("~/Documents/HGSOC_marker_paper/Manuscript/figs/Final_figs/data/chrom_lengths.txt",sep="\t")
 chrom_lengths<- chrom_lengths[,c(1,2)]
 chrom_lengths[,2]<-as.numeric(gsub(",","",chrom_lengths[,2]))
 
@@ -22,7 +22,7 @@ chrom_lengths[chrom_lengths[,1]=="Y",1]<- 24
 chrom_lengths[,1] <- as.numeric(chrom_lengths[,1])
 
 #load svs
-svs_all <- read.table("data/svFormatted.bedpe",sep="\t")
+svs_all <- read.table("~/Documents/HGSOC_marker_paper/Manuscript/figs/Final_figs/data/svFormatted.bedpe",sep="\t")
 svs_all <- svs_all[svs_all$V11!="INS",]
 svs1<- svs_all[,c(1:3,7:14)]
 svs2 <- svs_all[,c(4:14)]
@@ -112,7 +112,7 @@ png("CCNE1_SV.png",width=4,height=5,unit="in",res=300)
   dev.off()
   
 #Complex
-complex <- read.table("data/ComplexStructuralVariantRegions.csv",sep=",",header=T,row.names=1)
+complex <- read.table("~/Documents/HGSOC_marker_paper/ComplexSVs/ComplexStructuralVariantRegions_withAESS.txt",sep="\t",header=T)
 complex[1,]  
   
 complex[complex[,2]=="X",2]<-"23"
@@ -135,8 +135,9 @@ for (i in 1:dim(complex)[1]){
 complex<- cbind(complex,mid_pos2,total_pos)
 
 category <- complex$Feature
-category[category=="HighConfidenceSSChromothripsis"]<-"Chromothripsis"
-category[category=="LowConfidenceSSChromothripsis"]<-"Chromothripsis"
+#category[category=="HighConfidenceSSChromothripsis"]<-"Chromothripsis"
+#category[category=="LowConfidenceSSChromothripsis"]<-"Chromothripsis"
+category[category=="SSChromothripsis_AE"]<-"Chromothripsis"
 complex_labels<- c("bfb","AAecDNA","Chromothripsis","Chromoplexy",
   "Rigma","Pyrgo")
 complex<-cbind(complex,category)
@@ -152,7 +153,7 @@ complex_labels_nice<- as_labeller(c("All"="All","bfb"="Breakage fusion bridges",
          "AAecDNA"="ecDNA","Chromothripsis"="Chromothripsis","Chromoplexy"="Chromoplexy",
          "Rigma"="Rigma","Pyrgo"="Pyrgo"))
 
-png("complexSV_density_acrossGenome.png",width=12,height=6.5,unit="in",res=300)
+png("~/Documents/HGSOC_marker_paper/Manuscript/Files_from_chromothripsis_rerun/complexSV_density_acrossGenome_withAESS.png",width=12,height=6.5,unit="in",res=300)
 ggplot(complex2,aes(total_pos,fill=category))+geom_density(adjust=0.1)+theme_classic(base_size=16)+
   facet_grid(category~.,labeller=complex_labels_nice)+
   scale_fill_manual(values=complex_cols)+
@@ -169,7 +170,7 @@ dev.off()
 #Just chromosome 19
 chr19<- c(2654411288,2713028904)
 ccne1<- c(2654411288+29811991, 2654411288+29824312)
-png("CCNE1_complexSV_density.png",width=3.75,height=6.5,unit="in",res=300)
+png("~/Documents/HGSOC_marker_paper/Manuscript/Files_from_chromothripsis_rerun/CCNE1_complexSV_density_withAESS.png",width=3.75,height=6.5,unit="in",res=300)
 ggplot(complex2,aes(total_pos,fill=category))+geom_density(adjust=0.2)+theme_classic(base_size=13)+
   facet_grid(category~.)+
   scale_x_continuous(breaks=all_marks,labels=chr_labels,limits=chr19)+
@@ -230,7 +231,7 @@ for (i in 1:dim(all_counts)[1]){
 enrich_table<- data.frame(Class_SV=class_sv,Chromosome=chr,OR=or,LCI=lci,UCI=uci,Pvalue=p)
 adjp <- p.adjust(enrich_table$Pvalue,"bonferroni")
 enrich_table<- cbind(enrich_table,adjp)
-write.table(enrich_table,file="GenomeDist_SVs_enrichment.txt",sep="\t",row.names=F,quote=F)
+write.table(enrich_table,file="~/Documents/HGSOC_marker_paper/Manuscript/Files_from_chromothripsis_rerun/GenomeDist_SVs_enrichment_withAESS.txt",sep="\t",row.names=F,quote=F)
 
 #Enrichment results by cohort
 aocs_svs2 <- svs2[svs2$Cohort=="AO",]
@@ -281,7 +282,7 @@ getChr19SubCohort <- function(cohort_logic_svs,cohort_logic_comp,Cohort){
   enrich_table<- data.frame(Class_SV=class_sv,Chromosome=chr,OR=or,LCI=lci,UCI=uci,Pvalue=p)
   adjp <- p.adjust(enrich_table$Pvalue,"bonferroni")
   enrich_table<- cbind(enrich_table,adjp)
-  write.table(enrich_table,file=paste(Cohort,"_GenomeDist_SVs_enrichment.txt",sep=""),sep="\t",row.names=F,quote=F)
+  write.table(enrich_table,file=paste("~/Documents/HGSOC_marker_paper/Manuscript/Files_from_chromothripsis_rerun/",Cohort,"_GenomeDist_SVs_enrichment_withAESS.txt",sep=""),sep="\t",row.names=F,quote=F)
   
 }
 getChr19SubCohort(svs2$Cohort=="AO",complex2$Cohort=="AOCS",Cohort="AOCS")
@@ -383,7 +384,7 @@ enrich_rect_text <- data.frame(category = enriched_chrs_complex[,1],
                                ymax=rep(Inf, length(xmin)))
 enrich_rect_text$category <-as.factor(enrich_rect_text$category)
 
-pdf("individual_panels/supp_figs/SuppFig6B_complexSV_density_acrossGenome_withpeaks.pdf",width=13,height=6.5)
+pdf("~/Documents/HGSOC_marker_paper/Manuscript/Files_from_chromothripsis_rerun//SuppFig6B_complexSV_density_acrossGenome_withpeaks.pdf",width=13,height=6.5)
 
 ggplot(complex2,aes(total_pos,fill=category))+geom_density(adjust=0.1)+theme_classic(base_size=13)+
   facet_grid(category~.,labeller=complex_labels_nice)+
